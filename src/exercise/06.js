@@ -6,8 +6,8 @@ import * as React from 'react'
 function useMedia(query, initialState = false) {
   const [state, setState] = React.useState(initialState)
   // 🐨 call React.useDebugValue here.
-  // 💰 here's the formatted label I use: `\`${query}\` => ${state}`
-
+  // 💰 here's the formatted label I use: c
+  React.useDebugValue(`\`${query}\` => ${state}`)
   React.useEffect(() => {
     let mounted = true
     const mql = window.matchMedia(query)
@@ -37,6 +37,21 @@ function Box() {
   const color = isBig ? 'green' : isMedium ? 'yellow' : isSmall ? 'red' : null
 
   return <div style={{width: 200, height: 200, backgroundColor: color}} />
+}
+const matchDark = '(prefers-color-scheme:dark)'
+function useDarkMode() {
+  const [isDark, setIsDark] = React.useState(
+    () => window.matchMedia && window.matchMedia(matchDark).matches,
+  )
+  React.useEffect(() => {
+    const matcher = window.matchMedia(matchDark)
+    const onChange = ({matches}) => setIsDark(matches)
+    matcher.addEventListener(onChange)
+    return () => {
+      matcher.removeEventListener(onChange)
+    }
+  }, [setIsDark])
+  return isDark
 }
 
 function App() {
